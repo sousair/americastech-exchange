@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+service UserService {
+  rpc ValidateUserToken(ValidateUserTokenRequest) returns (ValidateUserTokenResponse) {}
+}
+
+message ValidateUserTokenRequest {
+  string token = 1;
+}
+
+message ValidateUserTokenResponse {
+  bool valid = 1;
+}
