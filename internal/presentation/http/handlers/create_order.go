@@ -1,7 +1,6 @@
 package http_handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -12,9 +11,6 @@ import (
 
 type (
 	CreateOrderRequest struct {
-		// ! Remove this. This is just for testing purposes
-		UserID string `json:"user_id"`
-
 		Pair      string `json:"pair"`
 		Direction string `json:"direction"`
 		Type      string `json:"type"`
@@ -41,12 +37,15 @@ func (h CreateOrderHandler) Handle(e echo.Context) error {
 	var request CreateOrderRequest
 
 	if err := e.Bind(&request); err != nil {
-		fmt.Printf("Error binding request: %v\n", err)
-		return err
+		return e.JSON(http.StatusBadRequest, map[string]string{
+			"error": "invalid request body",
+		})
 	}
 
+	userId := e.Get("user_id").(string)
+
 	order, err := h.createOrderUseCase.Create(usecases.CreateOrderParams{
-		UserID:    request.UserID,
+		UserID:    userId,
 		Pair:      request.Pair,
 		Direction: enums.OrderDirection(request.Direction),
 		Type:      enums.OrderType(request.Type),

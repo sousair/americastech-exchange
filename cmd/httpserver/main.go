@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -15,6 +14,7 @@ import (
 	gorm_repositories "github.com/sousair/americastech-exchange/internal/infra/database/repositories"
 	binance_exchange "github.com/sousair/americastech-exchange/internal/infra/providers/exchange"
 	http_handlers "github.com/sousair/americastech-exchange/internal/presentation/http/handlers"
+	http_middlewares "github.com/sousair/americastech-exchange/internal/presentation/http/middlewares"
 )
 
 func main() {
@@ -32,11 +32,6 @@ func main() {
 		postgresConnectionUrl = os.Getenv("POSTGRES_CONNECTION_URL")
 	)
 
-	fmt.Println("Binance API Key: ", binanceApiKey)
-	fmt.Println("Binance API Secret: ", binanceSecret)
-	fmt.Println("Binance Base URL: ", binanceApiBaseUrl)
-	fmt.Println("Postgres Connection URL: ", postgresConnectionUrl)
-
 	db, err := gorm.Open(postgres.Open(postgresConnectionUrl), &gorm.Config{})
 
 	if err != nil {
@@ -52,9 +47,11 @@ func main() {
 
 	createOrderHandler := http_handlers.NewCreateOrderHandler(createUserUC).Handle
 
+	userAuthMiddleware := http_middlewares.UserAuthMiddleware
+
 	e := echo.New()
 
-	e.POST("/orders", createOrderHandler)
+	e.POST("/orders", userAuthMiddleware(createOrderHandler))
 
 	e.Logger.Fatal(e.Start(":7070"))
 }
