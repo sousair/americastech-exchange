@@ -12,7 +12,7 @@ RUN go build -o /app/bin/httpserver ./cmd/httpserver/main.go
 
 #
 
-FROM scratch
+FROM alpine
 
 COPY --from=compiler /app/bin /app/bin
 

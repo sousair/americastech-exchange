@@ -6,19 +6,18 @@ services:
     container_name: exchange
     build: 
       context: ../
-      dockerfile: Dockerfile
+      dockerfile: ./build/Dockerfile
     ports:
       - 7070:7070
     depends_on:
       - postgres
   
   postgres:
-    postgres:
     image: postgres:latest
     container_name: postgres
     restart: always
     environment:
-      POSTGRES_DB: users
+      POSTGRES_DB: orders
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
