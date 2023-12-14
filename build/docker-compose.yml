@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  exchange:
+    image: exchange
+    container_name: exchange
+    build: 
+      context: ../
+      dockerfile: Dockerfile
+    ports:
+      - 7070:7070
+    depends_on:
+      - postgres
+  
+  postgres:
+    postgres:
+    image: postgres:latest
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: users
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@domain.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
