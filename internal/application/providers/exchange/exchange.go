@@ -23,6 +23,16 @@ type (
 		Status     enums.OrderStatus
 	}
 
+	UpdateOrderEvent struct {
+		ExternalID string
+		Pair       string
+		Direction  enums.OrderDirection
+		Type       enums.OrderType
+		Amount     string
+		Price      string
+		Status     enums.OrderStatus
+	}
+
 	ExchangeProvider interface {
 		Create(params CreateOrderParams) (*CreatedOrder, error)
 	}

@@ -18,7 +18,7 @@ func NewOrderRepository(db *gorm.DB) repositories.OrderRepository {
 	}
 }
 
-func (r *OrderRepository) Create(order *entities.Order) (*entities.Order, error) {
+func (r OrderRepository) Create(order *entities.Order) (*entities.Order, error) {
 	gormOrder := gorm_models.Order{
 		ID:         uuid.New().String(),
 		ExternalID: order.ExternalID,
@@ -32,6 +32,16 @@ func (r *OrderRepository) Create(order *entities.Order) (*entities.Order, error)
 	}
 
 	if err := r.db.Create(&gormOrder).Error; err != nil {
+		return nil, err
+	}
+
+	return gormOrder.ToEntity(), nil
+}
+
+func (r OrderRepository) FindOneBy(params map[string]interface{}) (*entities.Order, error) {
+	var gormOrder gorm_models.Order
+
+	if err := r.db.Where(params).First(&gormOrder).Error; err != nil {
 		return nil, err
 	}
 
