@@ -18,7 +18,7 @@ type (
 func NewBinanceExchangeProvider(apiKey, secret, baseUrl string) exchange.ExchangeProvider {
 	binanceClient := binance.NewClient(apiKey, secret)
 	binanceClient.BaseURL = baseUrl
-	binanceClient.Debug = true
+	binanceClient.TimeOffset = -3000
 
 	return &BinanceExchangeProvider{
 		client: binanceClient,
@@ -57,20 +57,20 @@ func (b BinanceExchangeProvider) Create(params exchange.CreateOrderParams) (*exc
 func (b BinanceExchangeProvider) mountMarketOrder(pair, direction, quantity string) *binance.CreateOrderService {
 	return b.client.
 		NewCreateOrderService().
-		Type("MARKET").
 		Symbol(pair).
 		Side(binance.SideType(direction)).
+		Type("MARKET").
 		Quantity(quantity)
 }
 
 func (b BinanceExchangeProvider) mountLimitOrder(pair, direction, quantity, price string) *binance.CreateOrderService {
 	return b.client.
 		NewCreateOrderService().
-		Type("LIMIT").
 		Symbol(pair).
 		Side(binance.SideType(direction)).
-		Quantity(quantity).
+		Type("LIMIT").
 		TimeInForce(binance.TimeInForceTypeGTC).
+		Quantity(quantity).
 		Price(price)
 }
 
