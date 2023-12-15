@@ -3,12 +3,12 @@ package binance_exchange
 import (
 	"context"
 	"fmt"
-	"strconv"
 
 	"github.com/adshao/go-binance/v2"
 	"github.com/sousair/americastech-exchange/internal/application/providers/exchange"
 	"github.com/sousair/americastech-exchange/internal/core/enums"
 )
+
 var binanceStatusMap = map[binance.OrderStatusType]enums.OrderStatus{
 	binance.OrderStatusTypeNew:             enums.OrderStatusOpen,
 	binance.OrderStatusTypePartiallyFilled: enums.OrderStatusPartiallyFilled,
@@ -41,30 +41,4 @@ func NewBinanceExchangeProvider(apiKey, secret string) *BinanceExchangeProvider 
 	}()
 
 	return binanceExchangeProvider
-}
-
-func calculateTotalPrice(order *binance.CreateOrderResponse) {
-	accPrice := 0.0
-	for _, fill := range order.Fills {
-		price, _ := strconv.ParseFloat(fill.Price, 64)
-		quantity, _ := strconv.ParseFloat(fill.Quantity, 64)
-		accPrice += price * quantity
-	}
-
-	order.Price = fmt.Sprintf("%.8f", accPrice)
-}
-
-func parseBinanceStatus(status binance.OrderStatusType) enums.OrderStatus {
-	switch status {
-	case binance.OrderStatusTypeNew:
-		return enums.Open
-	case binance.OrderStatusTypePartiallyFilled:
-		return enums.PartiallyFilled
-	case binance.OrderStatusTypeFilled:
-		return enums.Filled
-	case binance.OrderStatusTypeCanceled:
-		return enums.Canceled
-	default:
-		return ""
-	}
 }

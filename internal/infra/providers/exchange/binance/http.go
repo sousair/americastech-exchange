@@ -14,9 +14,20 @@ import (
 func (b BinanceExchangeProvider) Create(params exchange.CreateOrderParams) (*exchange.CreatedOrder, error) {
 	var binanceOrderService *binance.CreateOrderService
 
+	orderService := b.client.NewCreateOrderService().
+		Symbol(params.Pair).
+		Side(binance.SideType(params.Direction)).
+		Quantity(params.Amount)
+
 	switch params.Type {
 	case enums.OrderTypeMarket:
+		binanceOrderService = orderService.Type("MARKET")
+
 	case enums.OrderTypeLimit:
+		binanceOrderService = orderService.Type("LIMIT").
+			TimeInForce(binance.TimeInForceTypeGTC).
+			Price(params.Price)
+
 	}
 
 	binanceOrderRes, err := binanceOrderService.Do(context.Background())
@@ -26,7 +37,18 @@ func (b BinanceExchangeProvider) Create(params exchange.CreateOrderParams) (*exc
 	}
 
 	if binanceOrderRes.Status == binance.OrderStatusTypeFilled {
-		calculateTotalPrice(binanceOrderRes)
+		totalQuantity := float64(0)
+		totalPrice := float64(0)
+
+		for _, fill := range binanceOrderRes.Fills {
+			quantity, _ := strconv.ParseFloat(fill.Quantity, 64)
+			price, _ := strconv.ParseFloat(fill.Price, 64)
+
+			totalQuantity += quantity
+			totalPrice += quantity * price
+		}
+
+		binanceOrderRes.Price = fmt.Sprintf("%.8f", totalPrice/totalQuantity)
 	}
 
 	createdOrder := &exchange.CreatedOrder{
@@ -58,24 +80,4 @@ func (b BinanceExchangeProvider) CancelOrder(order *entities.Order) error {
 	}
 
 	return nil
-}
-
-func (b BinanceExchangeProvider) mountMarketOrder(pair, direction, quantity string) *binance.CreateOrderService {
-	return b.client.
-		NewCreateOrderService().
-		Symbol(pair).
-		Side(binance.SideType(direction)).
-		Type("MARKET").
-		Quantity(quantity)
-}
-
-func (b BinanceExchangeProvider) mountLimitOrder(pair, direction, quantity, price string) *binance.CreateOrderService {
-	return b.client.
-		NewCreateOrderService().
-		Symbol(pair).
-		Side(binance.SideType(direction)).
-		Type("LIMIT").
-		TimeInForce(binance.TimeInForceTypeGTC).
-		Quantity(quantity).
-		Price(price)
 }

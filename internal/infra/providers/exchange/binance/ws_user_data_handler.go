@@ -29,7 +29,7 @@ func (b BinanceExchangeProvider) wsUserDataHandler(event *binance.WsUserDataEven
 			Direction:  enums.OrderDirection(orderEvent.Side),
 			Type:       enums.OrderType(orderEvent.Type),
 			Price:      orderEvent.Price,
-			Status:     parseBinanceStatus(binance.OrderStatusType(orderEvent.Status)),
+			Status:     binanceStatusMap[binance.OrderStatusType(orderEvent.Status)],
 		}
 	}
 
