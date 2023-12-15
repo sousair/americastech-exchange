@@ -50,12 +50,12 @@ func main() {
 	orderRepository := gorm_repositories.NewOrderRepository(db)
 	binanceExchangeProvider := binance_exchange.NewBinanceExchangeProvider(binanceApiKey, binanceSecret)
 
-	updateUserUC := app_usecases.NewUpdateOrderUseCase(orderRepository)
-	createUserUC := app_usecases.NewCreateOrderUseCase(orderRepository, binanceExchangeProvider)
+	updateOrderUC := app_usecases.NewUpdateOrderFillUseCase(orderRepository)
+	createOrderUC := app_usecases.NewCreateOrderUseCase(orderRepository, binanceExchangeProvider)
 
 	go func() {
 		for orderEvent := range binanceExchangeProvider.UpdateOrderEventChan {
-			err := updateUserUC.Update(usecases.UpdateOrderParams{
+			err := updateOrderUC.Update(usecases.UpdateOrderFillParams{
 				ExternalID: orderEvent.ExternalID,
 				Status:     orderEvent.Status,
 				Price:      orderEvent.Price,
@@ -68,7 +68,7 @@ func main() {
 			fmt.Printf("Order updated: %s\n", orderEvent.ExternalID)
 		}
 	}()
-	createOrderHandler := http_handlers.NewCreateOrderHandler(createUserUC).Handle
+	createOrderHandler := http_handlers.NewCreateOrderHandler(createOrderUC).Handle
 
 	userAuthMiddleware := http_middlewares.UserAuthMiddleware
 

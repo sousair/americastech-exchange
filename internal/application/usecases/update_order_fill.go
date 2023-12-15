@@ -6,17 +6,17 @@ import (
 	"github.com/sousair/americastech-exchange/internal/core/usecases"
 )
 
-type UpdateOrderUseCase struct {
+type UpdateOrderFillUseCase struct {
 	orderRepository repositories.OrderRepository
 }
 
-func NewUpdateOrderUseCase(orderRepository repositories.OrderRepository) usecases.UpdateOrderUseCase {
-	return &UpdateOrderUseCase{
+func NewUpdateOrderFillUseCase(orderRepository repositories.OrderRepository) usecases.UpdateOrderFillFieldsUseCase {
+	return &UpdateOrderFillUseCase{
 		orderRepository: orderRepository,
 	}
 }
 
-func (uc UpdateOrderUseCase) Update(params usecases.UpdateOrderParams) error {
+func (uc UpdateOrderFillUseCase) Update(params usecases.UpdateOrderFillParams) error {
 	order, err := uc.orderRepository.FindOneBy(map[string]interface{}{
 		"external_id": params.ExternalID,
 	})

@@ -6,5 +6,6 @@ type (
 	OrderRepository interface {
 		Create(order *entities.Order) (*entities.Order, error)
 		FindOneBy(where map[string]interface{}) (*entities.Order, error)
+		Update(params *entities.Order) (*entities.Order, error)
 	}
 )
