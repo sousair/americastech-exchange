@@ -7,18 +7,18 @@ type (
 )
 
 const (
-	Buy  OrderDirection = "BUY"
-	Sell OrderDirection = "SELL"
+	OrderDirectionBuy  OrderDirection = "BUY"
+	OrderDirectionSell OrderDirection = "SELL"
 )
 
 const (
-	Limit  OrderType = "LIMIT"
-	Market OrderType = "MARKET"
+	OrderTypeLimit  OrderType = "LIMIT"
+	OrderTypeMarket OrderType = "MARKET"
 )
 
 const (
-	Open            OrderStatus = "open"
-	Canceled        OrderStatus = "cancelled"
-	PartiallyFilled OrderStatus = "partially_filled"
-	Filled          OrderStatus = "filled"
+	OrderStatusOpen            OrderStatus = "open"
+	OrderStatusCanceled        OrderStatus = "cancelled"
+	OrderStatusPartiallyFilled OrderStatus = "partially_filled"
+	OrderStatusFilled          OrderStatus = "filled"
 )

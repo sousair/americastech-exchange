@@ -27,7 +27,7 @@ func (uc UpdateOrderFillUseCase) Update(params usecases.UpdateOrderFillParams) e
 		return err
 	}
 
-	if order.Status == enums.Filled || order.Status == enums.Canceled {
+	if order.Status == enums.OrderStatusFilled || order.Status == enums.OrderStatusCanceled {
 		return errors.New("order is already filled or canceled")
 	}
 

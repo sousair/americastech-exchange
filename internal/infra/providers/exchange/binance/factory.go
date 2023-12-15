@@ -9,6 +9,12 @@ import (
 	"github.com/sousair/americastech-exchange/internal/application/providers/exchange"
 	"github.com/sousair/americastech-exchange/internal/core/enums"
 )
+var binanceStatusMap = map[binance.OrderStatusType]enums.OrderStatus{
+	binance.OrderStatusTypeNew:             enums.OrderStatusOpen,
+	binance.OrderStatusTypePartiallyFilled: enums.OrderStatusPartiallyFilled,
+	binance.OrderStatusTypeFilled:          enums.OrderStatusFilled,
+	binance.OrderStatusTypeCanceled:        enums.OrderStatusCanceled,
+}
 
 type BinanceExchangeProvider struct {
 	client               *binance.Client

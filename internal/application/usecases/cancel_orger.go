@@ -35,7 +35,7 @@ func (c CancelOrderUseCase) Cancel(params usecases.CancelOrderParams) error {
 		return err
 	}
 
-	order.Status = enums.Canceled
+	order.Status = enums.OrderStatusCanceled
 
 	_, err = c.orderRepository.Update(order)
 

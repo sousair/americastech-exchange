@@ -15,10 +15,8 @@ func (b BinanceExchangeProvider) Create(params exchange.CreateOrderParams) (*exc
 	var binanceOrderService *binance.CreateOrderService
 
 	switch params.Type {
-	case enums.Market:
-		binanceOrderService = b.mountMarketOrder(params.Pair, string(params.Direction), params.Amount)
-	case enums.Limit:
-		binanceOrderService = b.mountLimitOrder(params.Pair, string(params.Direction), params.Amount, params.Price)
+	case enums.OrderTypeMarket:
+	case enums.OrderTypeLimit:
 	}
 
 	binanceOrderRes, err := binanceOrderService.Do(context.Background())
@@ -38,7 +36,7 @@ func (b BinanceExchangeProvider) Create(params exchange.CreateOrderParams) (*exc
 		Type:       enums.OrderType(binanceOrderRes.Type),
 		Amount:     binanceOrderRes.OrigQuantity,
 		Price:      binanceOrderRes.Price,
-		Status:     parseBinanceStatus(binanceOrderRes.Status),
+		Status:     binanceStatusMap[binanceOrderRes.Status],
 	}
 
 	return createdOrder, nil
