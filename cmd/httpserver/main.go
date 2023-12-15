@@ -29,6 +29,7 @@ func main() {
 
 	var (
 		env           = os.Getenv("ENV")
+		port          = os.Getenv("PORT")
 		binanceApiKey = os.Getenv("BINANCE_API_KEY")
 		binanceSecret = os.Getenv("BINANCE_API_SECRET")
 
@@ -84,5 +85,5 @@ func main() {
 		}
 	}()
 
-	e.Logger.Fatal(e.Start(":7070"))
+	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", port)))
 }

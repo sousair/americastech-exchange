@@ -18,4 +18,6 @@ COPY --from=compiler /app/bin /app/bin
 
 COPY .env .env
 
+EXPOSE 80
+
 ENTRYPOINT ["/app/bin/httpserver"]
