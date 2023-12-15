@@ -3,9 +3,11 @@ package binance_exchange
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	"github.com/adshao/go-binance/v2"
 	"github.com/sousair/americastech-exchange/internal/application/providers/exchange"
+	"github.com/sousair/americastech-exchange/internal/core/entities"
 	"github.com/sousair/americastech-exchange/internal/core/enums"
 )
 
@@ -40,6 +42,24 @@ func (b BinanceExchangeProvider) Create(params exchange.CreateOrderParams) (*exc
 	}
 
 	return createdOrder, nil
+}
+
+func (b BinanceExchangeProvider) CancelOrder(order *entities.Order) error {
+	orderID, err := strconv.ParseInt(order.ExternalID, 10, 64)
+	if err != nil {
+		return err
+	}
+
+	_, err = b.client.NewCancelOrderService().
+		Symbol(order.Pair).
+		OrderID(orderID).
+		Do(context.Background())
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (b BinanceExchangeProvider) mountMarketOrder(pair, direction, quantity string) *binance.CreateOrderService {

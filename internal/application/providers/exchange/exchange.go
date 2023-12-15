@@ -1,6 +1,7 @@
 package exchange
 
 import (
+	"github.com/sousair/americastech-exchange/internal/core/entities"
 	"github.com/sousair/americastech-exchange/internal/core/enums"
 )
 
@@ -35,5 +36,6 @@ type (
 
 	ExchangeProvider interface {
 		Create(params CreateOrderParams) (*CreatedOrder, error)
+		CancelOrder(order *entities.Order) error
 	}
 )
