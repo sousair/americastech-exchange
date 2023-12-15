@@ -38,7 +38,7 @@ func (h CreateOrderHandler) Handle(e echo.Context) error {
 
 	if err := e.Bind(&request); err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]string{
-			"error": "invalid request body",
+			"message": "invalid request body",
 		})
 	}
 
@@ -55,7 +55,7 @@ func (h CreateOrderHandler) Handle(e echo.Context) error {
 
 	if err != nil {
 		return e.JSON(http.StatusInternalServerError, map[string]string{
-			"error": err.Error(),
+			"message": "internal server error",
 		})
 	}
 

@@ -1,9 +1,11 @@
 package http_handlers
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	custom_errors "github.com/sousair/americastech-exchange/internal/application/errors"
 	"github.com/sousair/americastech-exchange/internal/core/entities"
 	"github.com/sousair/americastech-exchange/internal/core/usecases"
 )
@@ -45,14 +47,14 @@ func (h GetOrderHandler) Handle(e echo.Context) error {
 	})
 
 	if err != nil {
+		if errors.As(err, custom_errors.OrderNotFoundError) {
+			return e.JSON(http.StatusNotFound, map[string]string{
+				"message": err.Error(),
+			})
+		}
+
 		return e.JSON(http.StatusInternalServerError, map[string]string{
 			"message": err.Error(),
-		})
-	}
-
-	if order == nil {
-		return e.JSON(http.StatusNotFound, map[string]string{
-			"message": "order not found",
 		})
 	}
 

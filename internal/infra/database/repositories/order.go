@@ -42,6 +42,10 @@ func (r OrderRepository) FindAllBy(params map[string]interface{}) ([]*entities.O
 	var gormOrders []*gorm_models.Order
 
 	if err := r.db.Where(params).Find(&gormOrders).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, nil
+		}
+
 		return nil, err
 	}
 
@@ -58,6 +62,10 @@ func (r OrderRepository) FindOneBy(params map[string]interface{}) (*entities.Ord
 	var gormOrder gorm_models.Order
 
 	if err := r.db.Where(params).First(&gormOrder).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, nil
+		}
+
 		return nil, err
 	}
 
