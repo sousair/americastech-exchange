@@ -9,29 +9,13 @@ import (
 	"github.com/sousair/americastech-exchange/internal/core/enums"
 )
 
-type (
-	BinanceExchangeProvider struct {
-		client *binance.Client
-	}
-)
-
-func NewBinanceExchangeProvider(apiKey, secret, baseUrl string) exchange.ExchangeProvider {
-	binanceClient := binance.NewClient(apiKey, secret)
-	binanceClient.BaseURL = baseUrl
-	binanceClient.TimeOffset = -3000
-
-	return &BinanceExchangeProvider{
-		client: binanceClient,
-	}
-}
-
 func (b BinanceExchangeProvider) Create(params exchange.CreateOrderParams) (*exchange.CreatedOrder, error) {
 	var binanceOrderService *binance.CreateOrderService
 
 	switch params.Type {
-	case "MARKET":
+	case enums.Market:
 		binanceOrderService = b.mountMarketOrder(params.Pair, string(params.Direction), params.Amount)
-	case "LIMIT":
+	case enums.Limit:
 		binanceOrderService = b.mountLimitOrder(params.Pair, string(params.Direction), params.Amount, params.Price)
 	}
 
@@ -39,6 +23,10 @@ func (b BinanceExchangeProvider) Create(params exchange.CreateOrderParams) (*exc
 
 	if err != nil {
 		return nil, err
+	}
+
+	if binanceOrderRes.Status == binance.OrderStatusTypeFilled {
+		calculateTotalPrice(binanceOrderRes)
 	}
 
 	createdOrder := &exchange.CreatedOrder{
@@ -72,19 +60,4 @@ func (b BinanceExchangeProvider) mountLimitOrder(pair, direction, quantity, pric
 		TimeInForce(binance.TimeInForceTypeGTC).
 		Quantity(quantity).
 		Price(price)
-}
-
-func parseBinanceStatus(status binance.OrderStatusType) enums.OrderStatus {
-	switch status {
-	case binance.OrderStatusTypeNew:
-		return enums.Open
-	case binance.OrderStatusTypePartiallyFilled:
-		return enums.PartiallyFilled
-	case binance.OrderStatusTypeFilled:
-		return enums.Filled
-	case binance.OrderStatusTypeCanceled:
-		return enums.Canceled
-	default:
-		return ""
-	}
 }
