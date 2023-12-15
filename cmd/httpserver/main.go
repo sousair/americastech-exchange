@@ -64,6 +64,7 @@ func main() {
 	e := echo.New()
 
 	e.POST("/orders", userAuthMiddleware(createOrderHandler))
+	e.GET("/orders/:order_id", userAuthMiddleware(getOrdersHandler))
 	e.GET("/orders", userAuthMiddleware(getOrdersHandler))
 	e.PATCH("/orders/cancel/:order_id", userAuthMiddleware(cancelOrderHandler))
 
