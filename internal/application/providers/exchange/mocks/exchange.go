@@ -18,9 +18,11 @@ func (m *MockExchangeProvider) CancelOrder(order *entities.Order) error {
 func (m *MockExchangeProvider) Create(params exchange.CreateOrderParams) (*exchange.CreatedOrder, error) {
 	args := m.Called(params)
 
-	if args.Error(1) != nil {
+	createOrderR := args.Get(0)
+
+	if createOrderR == nil {
 		return nil, args.Error(1)
 	}
 
-	return args.Get(0).(*exchange.CreatedOrder), args.Error(0)
+	return createOrderR.(*exchange.CreatedOrder), args.Error(1)
 }
