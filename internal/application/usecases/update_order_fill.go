@@ -1,6 +1,8 @@
 package app_usecases
 
 import (
+	"errors"
+
 	"github.com/sousair/americastech-exchange/internal/application/providers/repositories"
 	"github.com/sousair/americastech-exchange/internal/core/enums"
 	"github.com/sousair/americastech-exchange/internal/core/usecases"
@@ -23,6 +25,10 @@ func (uc UpdateOrderFillUseCase) Update(params usecases.UpdateOrderFillParams) e
 
 	if err != nil {
 		return err
+	}
+
+	if order.Status == enums.Filled || order.Status == enums.Canceled {
+		return errors.New("order is already filled or canceled")
 	}
 
 	order.Status = enums.OrderStatus(params.Status)
