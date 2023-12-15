@@ -38,6 +38,22 @@ func (r OrderRepository) Create(order *entities.Order) (*entities.Order, error) 
 	return gormOrder.ToEntity(), nil
 }
 
+func (r OrderRepository) FindAllBy(params map[string]interface{}) ([]*entities.Order, error) {
+	var gormOrders []*gorm_models.Order
+
+	if err := r.db.Where(params).Find(&gormOrders).Error; err != nil {
+		return nil, err
+	}
+
+	var orders []*entities.Order
+
+	for _, gormOrder := range gormOrders {
+		orders = append(orders, gormOrder.ToEntity())
+	}
+
+	return orders, nil
+}
+
 func (r OrderRepository) FindOneBy(params map[string]interface{}) (*entities.Order, error) {
 	var gormOrder gorm_models.Order
 
