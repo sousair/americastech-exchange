@@ -52,6 +52,7 @@ func main() {
 
 	updateOrderUC := app_usecases.NewUpdateOrderFillUseCase(orderRepository)
 	createOrderUC := app_usecases.NewCreateOrderUseCase(orderRepository, binanceExchangeProvider)
+	getOrdersUC := app_usecases.NewGetOrdersUseCase(orderRepository)
 
 	go func() {
 		for orderEvent := range binanceExchangeProvider.UpdateOrderEventChan {
@@ -68,13 +69,16 @@ func main() {
 			fmt.Printf("Order updated: %s\n", orderEvent.ExternalID)
 		}
 	}()
+
 	createOrderHandler := http_handlers.NewCreateOrderHandler(createOrderUC).Handle
+	getOrdersHandler := http_handlers.NewGetOrdersHandler(getOrdersUC).Handle
 
 	userAuthMiddleware := http_middlewares.UserAuthMiddleware
 
 	e := echo.New()
 
 	e.POST("/orders", userAuthMiddleware(createOrderHandler))
+	e.GET("/orders", userAuthMiddleware(getOrdersHandler))
 
 	e.Logger.Fatal(e.Start(":7070"))
 }
