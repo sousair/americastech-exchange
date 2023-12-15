@@ -33,6 +33,7 @@ func (b BinanceExchangeProvider) Create(params exchange.CreateOrderParams) (*exc
 	binanceOrderRes, err := binanceOrderService.Do(context.Background())
 
 	if err != nil {
+		fmt.Printf("[Binance][CreateOrder][Error]: %v\n", err)
 		return nil, err
 	}
 

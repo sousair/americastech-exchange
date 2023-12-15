@@ -12,15 +12,15 @@ func (b BinanceExchangeProvider) startUserDataWs(listenKey string) {
 	doneC, _, err := binance.WsUserDataServe(listenKey, b.wsUserDataHandler, b.wsUserDataErrHandler)
 
 	if err != nil {
-		fmt.Println("Error serving websocket:", err)
+		fmt.Println("[Binance] Error serving websocket:", err)
 	}
 
-	fmt.Println("Websocket started")
+	fmt.Println("[Binance] Websocket connection started")
 	<-doneC
 }
 
 func (b BinanceExchangeProvider) wsUserDataHandler(event *binance.WsUserDataEvent) {
-	fmt.Printf("Event: %v\n", event)
+	fmt.Printf("[Binance] Event: %v\n", event)
 	if event.Event == binance.UserDataEventTypeExecutionReport {
 		orderEvent := event.OrderUpdate
 		b.UpdateOrderEventChan <- exchange.UpdateOrderEvent{
@@ -32,9 +32,8 @@ func (b BinanceExchangeProvider) wsUserDataHandler(event *binance.WsUserDataEven
 			Status:     binanceStatusMap[binance.OrderStatusType(orderEvent.Status)],
 		}
 	}
-
 }
 
 func (b BinanceExchangeProvider) wsUserDataErrHandler(err error) {
-	fmt.Println(err)
+	fmt.Printf("[Binance][Error]: %v\n", err)
 }

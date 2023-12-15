@@ -28,7 +28,7 @@ func NewBinanceExchangeProvider(apiKey, secret string) *BinanceExchangeProvider 
 	listenKey, err := binanceClient.NewStartUserStreamService().Do(context.Background())
 
 	if err != nil {
-		fmt.Println("Error starting websocket:", err)
+		fmt.Println("[Binance] Error starting websocket:", err)
 	}
 
 	binanceExchangeProvider := &BinanceExchangeProvider{
