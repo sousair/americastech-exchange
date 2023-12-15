@@ -16,7 +16,7 @@ func NewGetOrdersUseCase(orderRepository repositories.OrderRepository) usecases.
 	}
 }
 
-func (uc GetOrdersUseCase) Get(params usecases.GetOrderParams) ([]*entities.Order, error) {
+func (uc GetOrdersUseCase) Get(params usecases.GetOrdersParams) ([]*entities.Order, error) {
 	orders, err := uc.orderRepository.FindAllBy(map[string]interface{}{
 		"user_id": params.UserID,
 	})

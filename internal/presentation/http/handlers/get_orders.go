@@ -27,7 +27,7 @@ func NewGetOrdersHandler(getOrdersUseCase usecases.GetOrdersUseCase) *GetOrdersH
 func (h GetOrdersHandler) Handle(e echo.Context) error {
 	userId := e.Get("user_id").(string)
 
-	orders, err := h.getOrdersUseCase.Get(usecases.GetOrderParams{
+	orders, err := h.getOrdersUseCase.Get(usecases.GetOrdersParams{
 		UserID: userId,
 	})
 
