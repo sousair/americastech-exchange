@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	custom_errors "github.com/sousair/americastech-exchange/internal/application/errors"
 	"github.com/sousair/americastech-exchange/internal/core/entities"
@@ -16,17 +17,19 @@ type (
 	}
 
 	GetOrderResponse struct {
-		Order *entities.Order `json:"orders"`
+		Order *entities.Order `json:"order"`
 	}
 
 	GetOrderHandler struct {
 		getOrderUseCase usecases.GetOrderUseCase
+		validator       *validator.Validate
 	}
 )
 
-func NewGetOrderHandler(getOrderUseCase usecases.GetOrderUseCase) *GetOrderHandler {
+func NewGetOrderHandler(getOrderUseCase usecases.GetOrderUseCase, validator *validator.Validate) *GetOrderHandler {
 	return &GetOrderHandler{
 		getOrderUseCase: getOrderUseCase,
+		validator:       validator,
 	}
 }
 
@@ -36,6 +39,12 @@ func (h GetOrderHandler) Handle(e echo.Context) error {
 	var gerOrderReq GetOrderRequest
 
 	if err := e.Bind(&gerOrderReq); err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]string{
+			"message": err.Error(),
+		})
+	}
+
+	if err := h.validator.Struct(gerOrderReq); err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]string{
 			"message": err.Error(),
 		})

@@ -15,8 +15,8 @@ type (
 		Pair      string `json:"pair" validate:"required"`
 		Direction string `json:"direction" validate:"required,oneof=BUY SELL"`
 		Type      string `json:"type" validate:"required,oneof=MARKET LIMIT"`
-		Amount    string `json:"amount" validate:"required,numeric,min=0.00000001"`
-		Price     string `json:"price" validate:"required_if=Type LIMIT,numeric,min=0.00000001"`
+		Amount    string `json:"amount" validate:"required,numeric"`
+		Price     string `json:"price" validate:"required_if=Type LIMIT,numeric"`
 	}
 
 	CreateOrderResponse struct {

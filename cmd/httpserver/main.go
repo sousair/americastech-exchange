@@ -57,10 +57,12 @@ func main() {
 	updateOrderUC := app_usecases.NewUpdateOrderFillUseCase(orderRepository)
 	createOrderUC := app_usecases.NewCreateOrderUseCase(orderRepository, binanceExchangeProvider)
 	getOrdersUC := app_usecases.NewGetOrdersUseCase(orderRepository)
+	getOrderUC := app_usecases.NewGetOrderUseCase(orderRepository)
 	cancelOrderUC := app_usecases.NewCancelOrderUseCase(orderRepository, binanceExchangeProvider)
 
 	createOrderHandler := http_handlers.NewCreateOrderHandler(createOrderUC, validator).Handle
 	getOrdersHandler := http_handlers.NewGetOrdersHandler(getOrdersUC).Handle
+	getOrderHandler := http_handlers.NewGetOrderHandler(getOrderUC, validator).Handle
 	cancelOrderHandler := http_handlers.NewCancelOrderHandler(cancelOrderUC, validator).Handle
 
 	userAuthMiddleware := http_middlewares.UserAuthMiddleware
@@ -68,7 +70,7 @@ func main() {
 	e := echo.New()
 
 	e.POST("/orders", userAuthMiddleware(createOrderHandler))
-	e.GET("/orders/:order_id", userAuthMiddleware(getOrdersHandler))
+	e.GET("/orders/:order_id", userAuthMiddleware(getOrderHandler))
 	e.GET("/orders", userAuthMiddleware(getOrdersHandler))
 	e.PATCH("/orders/cancel/:order_id", userAuthMiddleware(cancelOrderHandler))
 
