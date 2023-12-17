@@ -21,8 +21,8 @@ func NewGetOrderUseCase(orderRepository repositories.OrderRepository) usecases.G
 
 func (uc GetOrderUseCase) Get(params usecases.GetOrderParams) (*entities.Order, error) {
 	order, err := uc.orderRepository.FindOneBy(map[string]interface{}{
-		"id":     params.OrderId,
-		"userId": params.UserId,
+		"id":      params.OrderId,
+		"user_id": params.UserId,
 	})
 
 	if err != nil {
