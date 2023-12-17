@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/adshao/go-binance/v2"
+	"github.com/go-playground/validator/v10"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"gorm.io/driver/postgres"
@@ -51,14 +52,16 @@ func main() {
 	orderRepository := gorm_repositories.NewOrderRepository(db)
 	binanceExchangeProvider := binance_exchange.NewBinanceExchangeProvider(binanceApiKey, binanceSecret)
 
+	validator := validator.New()
+
 	updateOrderUC := app_usecases.NewUpdateOrderFillUseCase(orderRepository)
 	createOrderUC := app_usecases.NewCreateOrderUseCase(orderRepository, binanceExchangeProvider)
 	getOrdersUC := app_usecases.NewGetOrdersUseCase(orderRepository)
 	cancelOrderUC := app_usecases.NewCancelOrderUseCase(orderRepository, binanceExchangeProvider)
 
-	createOrderHandler := http_handlers.NewCreateOrderHandler(createOrderUC).Handle
+	createOrderHandler := http_handlers.NewCreateOrderHandler(createOrderUC, validator).Handle
 	getOrdersHandler := http_handlers.NewGetOrdersHandler(getOrdersUC).Handle
-	cancelOrderHandler := http_handlers.NewCancelOrderHandler(cancelOrderUC).Handle
+	cancelOrderHandler := http_handlers.NewCancelOrderHandler(cancelOrderUC, validator).Handle
 
 	userAuthMiddleware := http_middlewares.UserAuthMiddleware
 

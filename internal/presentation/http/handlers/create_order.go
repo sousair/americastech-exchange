@@ -3,6 +3,7 @@ package http_handlers
 import (
 	"net/http"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"github.com/sousair/americastech-exchange/internal/core/entities"
 	"github.com/sousair/americastech-exchange/internal/core/enums"
@@ -11,11 +12,11 @@ import (
 
 type (
 	CreateOrderRequest struct {
-		Pair      string `json:"pair"`
-		Direction string `json:"direction"`
-		Type      string `json:"type"`
-		Amount    string `json:"amount"`
-		Price     string `json:"price"`
+		Pair      string `json:"pair" validate:"required"`
+		Direction string `json:"direction" validate:"required,oneof=BUY SELL"`
+		Type      string `json:"type" validate:"required,oneof=MARKET LIMIT"`
+		Amount    string `json:"amount" validate:"required,numeric,min=0.00000001"`
+		Price     string `json:"price" validate:"required_if=Type LIMIT,numeric,min=0.00000001"`
 	}
 
 	CreateOrderResponse struct {
@@ -24,12 +25,14 @@ type (
 
 	CreateOrderHandler struct {
 		createOrderUseCase usecases.CreateOrderUseCase
+		validator          *validator.Validate
 	}
 )
 
-func NewCreateOrderHandler(createOrderUseCase usecases.CreateOrderUseCase) *CreateOrderHandler {
+func NewCreateOrderHandler(createOrderUseCase usecases.CreateOrderUseCase, validator *validator.Validate) *CreateOrderHandler {
 	return &CreateOrderHandler{
 		createOrderUseCase: createOrderUseCase,
+		validator:          validator,
 	}
 }
 
@@ -39,6 +42,12 @@ func (h CreateOrderHandler) Handle(e echo.Context) error {
 	if err := e.Bind(&request); err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]string{
 			"message": "invalid request body",
+		})
+	}
+
+	if err := h.validator.Struct(request); err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]string{
+			"message": err.Error(),
 		})
 	}
 

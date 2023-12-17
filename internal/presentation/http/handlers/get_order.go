@@ -12,7 +12,7 @@ import (
 
 type (
 	GetOrderRequest struct {
-		OrderId string `param:"order_id"`
+		OrderId string `param:"order_id" validate:"required,uuid4"`
 	}
 
 	GetOrderResponse struct {

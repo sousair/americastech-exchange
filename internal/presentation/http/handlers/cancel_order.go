@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	custom_errors "github.com/sousair/americastech-exchange/internal/application/errors"
 	"github.com/sousair/americastech-exchange/internal/core/usecases"
@@ -11,17 +12,19 @@ import (
 
 type (
 	CancelOrderRequest struct {
-		OrderID string `param:"order_id"`
+		OrderID string `param:"order_id" validate:"required,uuid4"`
 	}
 
 	CancelOrderHandler struct {
 		cancelOrderUseCase usecases.CancelOrderUseCase
+		validator          *validator.Validate
 	}
 )
 
-func NewCancelOrderHandler(cancelOrderUseCase usecases.CancelOrderUseCase) *CancelOrderHandler {
+func NewCancelOrderHandler(cancelOrderUseCase usecases.CancelOrderUseCase, validator *validator.Validate) *CancelOrderHandler {
 	return &CancelOrderHandler{
 		cancelOrderUseCase: cancelOrderUseCase,
+		validator:          validator,
 	}
 }
 
@@ -29,6 +32,12 @@ func (h CancelOrderHandler) Handle(e echo.Context) error {
 	var cancelOrderRequest CancelOrderRequest
 
 	if err := e.Bind(&cancelOrderRequest); err != nil {
+		return e.JSON(http.StatusBadRequest, map[string]string{
+			"message": err.Error(),
+		})
+	}
+
+	if err := h.validator.Struct(cancelOrderRequest); err != nil {
 		return e.JSON(http.StatusBadRequest, map[string]string{
 			"message": err.Error(),
 		})
