@@ -16,7 +16,7 @@ type (
 		Direction string `json:"direction" validate:"required,oneof=BUY SELL"`
 		Type      string `json:"type" validate:"required,oneof=MARKET LIMIT"`
 		Amount    string `json:"amount" validate:"required,numeric"`
-		Price     string `json:"price" validate:"required_if=Type LIMIT,numeric"`
+		Price     string `json:"price" validate:"required_if=Type LIMIT,omitempty,numeric"`
 	}
 
 	CreateOrderResponse struct {
