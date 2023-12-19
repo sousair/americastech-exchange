@@ -10,17 +10,17 @@ import (
 
 type Order struct {
 	gorm.Model
-	ID         string `gorm:"primary_key"`
-	ExternalID string `gorm:"unique_index"`
-	UserID     string
-	Pair       string
-	Direction  string
-	Amount     string
-	Type       string
-	Price      string
-	Status     string
-	CreatedAt  *time.Time `gorm:"autoCreateTime"`
-	UpdatedAt  *time.Time `gorm:"autoUpdateTime"`
+	ID         string               `gorm:"type:uuid;primary_key"`
+	ExternalID string               `gorm:"unique_index"`
+	UserID     string               `gorm:"type:uuid;not null;index"`
+	Pair       string               `gorm:"not null"`
+	Direction  enums.OrderDirection `gorm:"not null"`
+	Amount     string               `gorm:"not null"`
+	Type       enums.OrderType      `gorm:"not null"`
+	Price      string               `gorm:"not null"`
+	Status     enums.OrderStatus    `gorm:"not null"`
+	CreatedAt  *time.Time           `gorm:"autoCreateTime"`
+	UpdatedAt  *time.Time           `gorm:"autoUpdateTime"`
 }
 
 func (o Order) ToEntity() *entities.Order {
@@ -29,11 +29,11 @@ func (o Order) ToEntity() *entities.Order {
 		ExternalID: o.ExternalID,
 		UserID:     o.UserID,
 		Pair:       o.Pair,
-		Direction:  enums.OrderDirection(o.Direction),
+		Direction:  o.Direction,
 		Amount:     o.Amount,
-		Type:       enums.OrderType(o.Type),
+		Type:       o.Type,
 		Price:      o.Price,
-		Status:     enums.OrderStatus(o.Status),
+		Status:     o.Status,
 		CreatedAt:  o.CreatedAt,
 		UpdatedAt:  o.UpdatedAt,
 	}

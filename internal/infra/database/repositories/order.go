@@ -24,11 +24,11 @@ func (r OrderRepository) Create(order *entities.Order) (*entities.Order, error) 
 		ExternalID: order.ExternalID,
 		UserID:     order.UserID,
 		Pair:       order.Pair,
-		Direction:  string(order.Direction),
+		Direction:  order.Direction,
 		Amount:     order.Amount,
-		Type:       string(order.Type),
+		Type:       order.Type,
 		Price:      order.Price,
-		Status:     string(order.Status),
+		Status:     order.Status,
 	}
 
 	if err := r.db.Create(&gormOrder).Error; err != nil {
@@ -78,11 +78,11 @@ func (r OrderRepository) Update(order *entities.Order) (*entities.Order, error) 
 		ExternalID: order.ExternalID,
 		UserID:     order.UserID,
 		Pair:       order.Pair,
-		Direction:  string(order.Direction),
+		Direction:  order.Direction,
 		Amount:     order.Amount,
-		Type:       string(order.Type),
+		Type:       order.Type,
 		Price:      order.Price,
-		Status:     string(order.Status),
+		Status:     order.Status,
 	}
 
 	if err := r.db.Model(orderModel).Updates(&orderModel).Error; err != nil {
